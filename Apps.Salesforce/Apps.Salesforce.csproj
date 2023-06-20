@@ -11,4 +11,8 @@
     <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Requests\" />
+  </ItemGroup>
 </Project>

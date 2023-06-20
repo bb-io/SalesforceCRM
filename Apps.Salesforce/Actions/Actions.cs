@@ -2,21 +2,18 @@
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common;
+using Apps.Salesforce.Models.Responses;
 
-namespace Apps.Salesforce
+namespace Apps.Salesforce.Actions
 {
     [ActionList]
     public class Actions
     {
-        [Action]
+        [Action("Get account name", Description = "Get account name")]
         public AccountName GetAccountName(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
         {
-            var domainName = authenticationCredentialsProviders.First(v => v.KeyName == "domainName").Value;
-
-            var client = new SalesforceClient(authenticationCredentialsProviders: authenticationCredentialsProviders);
-            var request = new RestRequest("services/data/v57.0/query?q=SELECT+name+from+Account", Method.Get);
-
-            request.AddHeader("Authorization", authenticationCredentialsProviders.First(p => p.KeyName == "Authorization").Value);
+            var client = new SalesforceClient(authenticationCredentialsProviders);
+            var request = new SalesforceRequest("services/data/v57.0/query?q=SELECT+name+from+Account", Method.Get, authenticationCredentialsProviders);
 
             var response = client.Execute<QueryResult>(request);
             if (response.Data == null)

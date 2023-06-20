@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace Apps.Salesforce
-{ 
+namespace Apps.Salesforce.Models.Responses
+{
 
     public class QueryResult
     {
