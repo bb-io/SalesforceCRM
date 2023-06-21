@@ -16,9 +16,7 @@ namespace Apps.Salesforce
         public SalesforceApplication()
 
         {
-
             _container = LoadTypes();
-
         }
 
         public T GetInstance<T>()
