@@ -1,6 +1,5 @@
 ﻿using System;
 using Apps.Salesforce.Auth.OAuth2;
-using Apps.Salesforce.Authorization.OAuth2;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Authentication.OAuth2;
 

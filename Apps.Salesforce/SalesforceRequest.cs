@@ -13,7 +13,7 @@ namespace Apps.Salesforce
         public SalesforceRequest(string endpoint, Method method, IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders) : base(endpoint, method)
         {
             var token = authenticationCredentialsProviders.First(p => p.KeyName == "Authorization").Value;
-            this.AddHeader("Authorization", $"Bearer {token}");
+            this.AddHeader("Authorization", $"{token}");
         }
     }
 }
