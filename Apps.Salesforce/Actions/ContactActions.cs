@@ -1,4 +1,5 @@
-﻿using Apps.Salesforce.Dtos;
+﻿using Apps.Salesforce.Crm.Dtos;
+using Apps.Salesforce.Dtos;
 using Apps.Salesforce.Models.Requests;
 using Apps.Salesforce.Models.Responses;
 using Blackbird.Applications.Sdk.Common;

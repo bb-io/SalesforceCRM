@@ -6,6 +6,7 @@ using Apps.Salesforce.Models.Responses;
 using Apps.Salesforce.Dtos;
 using Apps.Salesforce.Models.Requests;
 using System.Dynamic;
+using Apps.Salesforce.Crm.Dtos;
 
 namespace Apps.Salesforce.Actions
 {

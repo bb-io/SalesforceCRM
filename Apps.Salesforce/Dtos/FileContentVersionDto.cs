@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apps.Salesforce.Crm.Dtos
+namespace App.Salesforce.Crm.Dtos
 {
-    public class RecordIdDto
+    public class FileContentVersionDto
     {
         public string Id { get; set; }
+        public string Title { get; set; }
+        public string PathOnClient { get; set; }
     }
 }

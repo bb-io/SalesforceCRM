@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apps.Salesforce.Crm.Dtos
+namespace App.Salesforce.Crm.Dtos
 {
-    public class RecordIdDto
+    public class RecordsCollectionDto<T>
     {
-        public string Id { get; set; }
+        public IEnumerable<T> Records { get; set; }
     }
 }
