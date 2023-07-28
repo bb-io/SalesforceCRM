@@ -37,7 +37,7 @@ namespace Apps.Salesforce.Actions
             [ActionParameter] CreateAccountRequest input)
         {
             var client = new SalesforceClient(authenticationCredentialsProviders);
-            var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account", Method.Get, authenticationCredentialsProviders);
+            var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account", Method.Post, authenticationCredentialsProviders);
             request.AddJsonBody(input);
             return client.Execute<RecordIdDto>(request).Data;
         }
