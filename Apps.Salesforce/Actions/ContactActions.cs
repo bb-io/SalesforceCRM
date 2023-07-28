@@ -42,7 +42,7 @@ namespace Apps.Salesforce.Actions
             [ActionParameter] CreateContactRequest input)
         {
             var client = new SalesforceClient(authenticationCredentialsProviders);
-            var request = new SalesforceRequest($"services/data/v57.0/sobjects/Contact", Method.Get, authenticationCredentialsProviders);
+            var request = new SalesforceRequest($"services/data/v57.0/sobjects/Contact", Method.Post, authenticationCredentialsProviders);
             request.AddJsonBody(input);
             return client.Execute<RecordIdDto>(request).Data;
         }
