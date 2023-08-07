@@ -25,6 +25,9 @@ namespace Apps.Salesforce.Auth.OAuth2
 
     public class OAuth2TokenService : IOAuth2TokenService
     {
+
+        private const string ExpiresAtKeyName = "expires_at";
+
         private static string TokenUrl = "";
 
         public async Task<Dictionary<string, string>> RequestToken(string state, string code, Dictionary<string, string> values, CancellationToken cancellationToken)
@@ -43,7 +46,6 @@ namespace Apps.Salesforce.Auth.OAuth2
                 { "code", code }
             };
             return await RequestToken(bodyParameters, cancellationToken);
-            //throw new NotImplementedException();
         }
 
         private async Task<Dictionary<string, string>> RequestToken(Dictionary<string, string> bodyParameters, CancellationToken cancellationToken)
@@ -55,17 +57,31 @@ namespace Apps.Salesforce.Auth.OAuth2
             var responseContent = await response.Content.ReadAsStringAsync();
             var resultDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(responseContent)?.ToDictionary(r => r.Key, r => r.Value?.ToString())
                 ?? throw new InvalidOperationException($"Invalid response content: {responseContent}");
+
+            var expiresAt = utcNow.AddHours(2);
+            resultDictionary.Add(ExpiresAtKeyName, expiresAt.ToString());
+
             return resultDictionary;
         }
 
         public bool IsRefreshToken(Dictionary<string, string> values)
         {
-            return false;
+            var expiresAt = DateTime.Parse(values[ExpiresAtKeyName]);
+            return DateTime.UtcNow > expiresAt;
         }
 
-        public Task<Dictionary<string, string>> RefreshToken(Dictionary<string, string> values, CancellationToken cancellationToken)
+        public async Task<Dictionary<string, string>> RefreshToken(Dictionary<string, string> values, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            const string grant_type = "refresh_token";
+
+            var bodyParameters = new Dictionary<string, string>
+            {
+                { "grant_type", grant_type },
+                { "client_id", values["clientId"] },
+                { "client_secret", values["clientSecret"] },
+                { "refresh_token", values["refresh_token"] },
+            };
+            return await RequestToken(bodyParameters, cancellationToken);
         }
 
         public Task RevokeToken(Dictionary<string, string> values)
