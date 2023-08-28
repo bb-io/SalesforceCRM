@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using File = Blackbird.Applications.Sdk.Common.Files.File;
 
-namespace App.Salesforce.Crm.Models.Requests
+namespace Apps.Salesforce.Crm.Models.Requests;
+
+public class UploadFileRequest
 {
-    public class UploadFileRequest
-    {
-        public byte[] File { get; set; }
+    public File File { get; set; }
 
-        public string Filename { get; set; }
+    public string? Filename { get; set; }
 
-        public string Title { get; set; }
-    }
+    public string Title { get; set; }
 }

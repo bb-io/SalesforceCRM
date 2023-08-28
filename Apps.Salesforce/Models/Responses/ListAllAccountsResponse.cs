@@ -1,14 +1,8 @@
-﻿using Apps.Salesforce.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Apps.Salesforce.Crm.Dtos;
 
-namespace Apps.Salesforce.Models.Responses
+namespace Apps.Salesforce.Crm.Models.Responses;
+
+public class ListAllAccountsResponse
 {
-    public class ListAllAccountsResponse
-    {
-        public IEnumerable<AccountDto> Records { get; set; }
-    }
+    public IEnumerable<AccountDto> Records { get; set; }
 }
