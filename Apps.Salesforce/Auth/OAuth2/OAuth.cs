@@ -72,6 +72,7 @@ public class OAuth2TokenService : IOAuth2TokenService
     public async Task<Dictionary<string, string>> RefreshToken(Dictionary<string, string> values, CancellationToken cancellationToken)
     {
         const string grant_type = "refresh_token";
+        TokenUrl = $"https://{values["domainName"]}.my.salesforce.com/services/oauth2/token";
 
         var bodyParameters = new Dictionary<string, string>
         {
