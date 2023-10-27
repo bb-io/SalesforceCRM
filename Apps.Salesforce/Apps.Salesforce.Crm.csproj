@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Product>Blackbird Salesforce CRM</Product>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Description>Сloud-based customer relationship management platform that helps businesses manage and analyze customer interactions and data to improve sales, marketing, and customer service</Description>
     <AssemblyName>Apps.Salesforce.Crm</AssemblyName>
   </PropertyGroup>
@@ -15,5 +15,9 @@
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.2.0-alpha3" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource CopyToOutputDirectory="Always" Include="image\icon.png"></EmbeddedResource>
   </ItemGroup>
 </Project>
