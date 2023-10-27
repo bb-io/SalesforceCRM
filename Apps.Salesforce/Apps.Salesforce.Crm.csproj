@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Product>Blackbird Salesforce CRM</Product>
-    <Version>1.0.1</Version>
+    <Product>Salesforce CRM</Product>
+    <Version>1.0.2</Version>
     <Description>Сloud-based customer relationship management platform that helps businesses manage and analyze customer interactions and data to improve sales, marketing, and customer service</Description>
     <AssemblyName>Apps.Salesforce.Crm</AssemblyName>
   </PropertyGroup>
