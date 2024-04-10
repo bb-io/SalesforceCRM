@@ -1,10 +1,10 @@
-﻿using Blackbird.Applications.Sdk.Utils.Sdk.DataSourceHandlers;
+﻿using Blackbird.Applications.Sdk.Common.Dictionaries;
 
 namespace Apps.Salesforce.Crm.DataSourceHandler.EnumDataHandlers;
 
-public class CleanStatusDataHandler : EnumDataHandler
+public class CleanStatusDataHandler : IStaticDataSourceHandler
 {
-    protected override Dictionary<string, string> EnumValues => new()
+    public Dictionary<string, string> GetData() => new()
     {
         { "Matched", "Matched" },
         { "Different", "Different" },

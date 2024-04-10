@@ -1,6 +1,7 @@
 ﻿using Apps.Salesforce.Crm.DataSourceHandler;
 using Apps.Salesforce.Crm.DataSourceHandler.EnumDataHandlers;
 using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Apps.Salesforce.Crm.Models.Requests;
@@ -35,7 +36,7 @@ public class CreateContactRequest
     [Display("Do not call")] public bool? DoNotCall { get; set; }
 
     [Display("Clean status")]
-    [DataSource(typeof(CleanStatusDataHandler))]
+    [StaticDataSource(typeof(CleanStatusDataHandler))]
     public string? CleanStatus { get; set; }
 
     [Display("Connection received ID")] public string? ConnectionReceivedId { get; set; }
