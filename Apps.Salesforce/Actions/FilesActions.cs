@@ -6,12 +6,21 @@ using Blackbird.Applications.Sdk.Common;
 using Apps.Salesforce.Crm.Dtos;
 using Apps.Salesforce.Crm.Models.Requests;
 using Apps.Salesforce.Crm.Models.Responses;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using Blackbird.Applications.Sdk.Utils.Extensions.Files;
 
 namespace Apps.Salesforce.Crm.Actions;
 
 [ActionList]
 public class FilesActions
 {
+    private readonly IFileManagementClient _fileManagementClient;
+
+    public FilesActions(IFileManagementClient fileManagementClient)
+    {
+        _fileManagementClient = fileManagementClient;
+    }
+
     [Action("List all files", Description = "List all files")]
     public ListAllFilesResponse ListAllFiles(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
     {
@@ -32,7 +41,7 @@ public class FilesActions
     }
 
     [Action("Download file", Description = "Download file by id")]
-    public DownloadFileResponse DownloadFile(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
+    public async Task<DownloadFileResponse> DownloadFile(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
         [ActionParameter] DownloadFileRequest input)
     {
         var client = new SalesforceClient(authenticationCredentialsProviders);
@@ -45,13 +54,11 @@ public class FilesActions
 
         var response = client.Get(request);
         var fileContent = response.RawBytes!;
-        
+
+        using var stream = new MemoryStream(response.RawBytes!);
+        var file = await _fileManagementClient.UploadAsync(stream, response.ContentType ?? MediaTypeNames.Application.Octet, contentVersion?.PathOnClient ?? string.Empty);
         return new() {
-            File = new(fileContent)
-            {
-                Name = contentVersion?.PathOnClient ?? string.Empty,
-                ContentType = response.ContentType ?? MediaTypeNames.Application.Octet
-            },
+            File = file
         };
     }
 
@@ -61,11 +68,12 @@ public class FilesActions
     {
         var client = new SalesforceClient(authenticationCredentialsProviders);
         var request = new SalesforceRequest($"services/data/v57.0/sobjects/ContentVersion", Method.Post, authenticationCredentialsProviders);
+        var fileBytes = _fileManagementClient.DownloadAsync(input.File).Result.GetByteData().Result;
         request.AddJsonBody(new
         {
             Title = input.Title,
             PathOnClient = input.Filename ?? input.File.Name,
-            VersionData = Convert.ToBase64String(input.File.Bytes)
+            VersionData = Convert.ToBase64String(fileBytes)
         });
         return client.Execute<RecordIdDto>(request).Data;
     }
