@@ -1,11 +1,18 @@
 ﻿using Apps.Salesforce.Crm.Auth.OAuth2;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Authentication.OAuth2;
+using Blackbird.Applications.Sdk.Common.Metadata;
 
 namespace Apps.Salesforce.Crm;
 
-public class SalesforceApplication : IApplication
+public class SalesforceApplication : IApplication, ICategoryProvider
 {
+    public IEnumerable<ApplicationCategory> Categories
+    {
+        get => [ApplicationCategory.Crm];
+        set { }
+    }
+    
     private readonly Dictionary<Type, object> _container;
     public string Name
     {
