@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Product>Salesforce CRM</Product>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Description>Сloud-based customer relationship management platform that helps businesses manage and analyze customer interactions and data to improve sales, marketing, and customer service</Description>
     <AssemblyName>Apps.Salesforce.Crm</AssemblyName>
   </PropertyGroup>
