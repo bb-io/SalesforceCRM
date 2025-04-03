@@ -1,58 +1,50 @@
-﻿using Blackbird.Applications.Sdk.Common.Authentication;
+﻿using Apps.Salesforce.Crm.Constants;
+using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Connections;
 
 namespace Apps.Salesforce.Crm.Connections;
 
 public class OAuth2ConnectionDefinition : IConnectionDefinition
 {
-    public IEnumerable<ConnectionPropertyGroup> ConnectionPropertyGroups => new List<ConnectionPropertyGroup>()
-    {
+    public IEnumerable<ConnectionPropertyGroup> ConnectionPropertyGroups =>
+    [
         new ConnectionPropertyGroup
         {
             Name = "OAuth2",
             AuthenticationType = ConnectionAuthenticationType.OAuth2,
-            ConnectionUsage = ConnectionUsage.Actions,
             ConnectionProperties = new List<ConnectionProperty>()
             {
-                new ConnectionProperty("domainName"),
-                new ConnectionProperty("clientId"),
-                new ConnectionProperty("clientSecret")
+                new(CredNames.DomainName) 
+                {
+                    DisplayName = "Domain name"
+                },
+                new(CredNames.ClientId)
+                {
+                    DisplayName = "Client ID"
+                },
+                new(CredNames.ClientSecret)
+                {
+                    DisplayName = "Client secret",
+                    Sensitive = true
+                }
             }
 
         }
-    };
+    ];
 
     public IEnumerable<AuthenticationCredentialsProvider> CreateAuthorizationCredentialsProviders(Dictionary<string, string> values)
     {
-        string token;
-        string domainName;
-        try
-        {
-            token = values.First(v => v.Key == "access_token").Value;
-        } catch
-        {
-            throw new Exception("access_token not found");
-        }
-
-        try
-        {
-            domainName = values.First(v => v.Key == "domainName").Value;
-        } catch
-        {
-            throw new Exception("domain name not found");
-        }
+        var token = GetValueOrThrow(values, "access_token", "Access token not found");
+        var domainName = GetValueOrThrow(values, CredNames.DomainName, "Domain name not found");
             
-        yield return new AuthenticationCredentialsProvider(
-            AuthenticationCredentialsRequestLocation.Header,
-            "Authorization",
-            $"Bearer {token}"
-        );
-
-            
-        yield return new AuthenticationCredentialsProvider(
-            AuthenticationCredentialsRequestLocation.QueryString,
-            "domainName",
-            domainName
-        );
+        yield return new AuthenticationCredentialsProvider(CredNames.Authorization, $"Bearer {token}");
+        yield return new AuthenticationCredentialsProvider(CredNames.DomainName, domainName);
+    }
+    
+    private string GetValueOrThrow(Dictionary<string, string> values, string key, string errorMessage)
+    {
+        return values.TryGetValue(key, out var value) 
+            ? value 
+            : throw new ArgumentException(errorMessage, nameof(key));
     }
 }

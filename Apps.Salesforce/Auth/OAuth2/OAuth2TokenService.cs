@@ -1,49 +1,32 @@
-﻿using System.Text.Json;
+using System.Text.Json;
+using Apps.Salesforce.Crm.Constants;
+using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Authentication.OAuth2;
-using Microsoft.AspNetCore.WebUtilities;
+using Blackbird.Applications.Sdk.Common.Invocation;
 
 namespace Apps.Salesforce.Crm.Auth.OAuth2;
 
-public class OAuth2AuthorizeService : IOAuth2AuthorizeService
+public class OAuth2TokenService(InvocationContext invocationContext) : BaseInvocable(invocationContext), IOAuth2TokenService
 {
-    public string GetAuthorizationUrl(Dictionary<string, string> dict)
-    {
-        var domainName = dict["domainName"];
-        var oauthUrl = $"https://{domainName}.my.salesforce.com/services/oauth2/authorize";
-        //var oauthUrl = "https://login.salesforce.com/services/oauth2/authorize";
-        var parameters = new Dictionary<string, string>
-        {
-            { "client_id", dict["clientId"] },
-            { "redirect_uri", "https://sandbox.blackbird.io/api-rest/connections/AuthorizationCode" },
-            { "response_type", "code"},
-            { "state", dict["state"] },
-        };
-        return QueryHelpers.AddQueryString(oauthUrl, parameters);
-    }
-}
-
-public class OAuth2TokenService : IOAuth2TokenService
-{
-
     private const string ExpiresAtKeyName = "expires_at";
 
     private static string TokenUrl = "";
 
     public async Task<Dictionary<string, string>> RequestToken(string state, string code, Dictionary<string, string> values, CancellationToken cancellationToken)
     {
+        TokenUrl = $"https://{values[CredNames.DomainName]}.my.salesforce.com/services/oauth2/token";
 
-        TokenUrl = $"https://{values["domainName"]}.my.salesforce.com/services/oauth2/token";
         const string grant_type = "authorization_code";
-        const string redirectUri = "https://sandbox.blackbird.io/api-rest/connections/AuthorizationCode";
-
+        string redirectUri = $"{invocationContext.UriInfo.BridgeServiceUrl.ToString().TrimEnd('/')}/AuthorizationCode";
         var bodyParameters = new Dictionary<string, string>
         {
             { "grant_type", grant_type },
-            { "client_id", values["clientId"] },
-            { "client_secret", values["clientSecret"] },
+            { "client_id", values[CredNames.ClientId] },
+            { "client_secret", values[CredNames.ClientSecret] },
             { "redirect_uri", redirectUri },
             { "code", code }
         };
+
         return await RequestToken(bodyParameters, cancellationToken);
     }
 
@@ -72,13 +55,13 @@ public class OAuth2TokenService : IOAuth2TokenService
     public async Task<Dictionary<string, string>> RefreshToken(Dictionary<string, string> values, CancellationToken cancellationToken)
     {
         const string grant_type = "refresh_token";
-        TokenUrl = $"https://{values["domainName"]}.my.salesforce.com/services/oauth2/token";
+        TokenUrl = $"https://{values[CredNames.DomainName]}.my.salesforce.com/services/oauth2/token";
 
         var bodyParameters = new Dictionary<string, string>
         {
             { "grant_type", grant_type },
-            { "client_id", values["clientId"] },
-            { "client_secret", values["clientSecret"] },
+            { "client_id", values[CredNames.ClientId] },
+            { "client_secret", values[CredNames.ClientSecret] },
             { "refresh_token", values["refresh_token"] },
         };
         return await RequestToken(bodyParameters, cancellationToken);
@@ -88,5 +71,4 @@ public class OAuth2TokenService : IOAuth2TokenService
     {
         throw new NotImplementedException();
     }
-
 }
