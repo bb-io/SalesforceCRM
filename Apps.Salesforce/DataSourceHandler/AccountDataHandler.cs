@@ -7,17 +7,12 @@ using RestSharp;
 
 namespace Apps.Salesforce.Crm.DataSourceHandler;
 
-public class AccountDataHandler : BaseInvocable, IAsyncDataSourceHandler
+public class AccountDataHandler(InvocationContext invocationContext) : BaseInvocable(invocationContext), IAsyncDataSourceItemHandler
 {
     private AuthenticationCredentialsProvider[] Creds
         => InvocationContext.AuthenticationCredentialsProviders.ToArray();
 
-    public AccountDataHandler(InvocationContext invocationContext) : base(invocationContext)
-    {
-    }
-
-    public async Task<Dictionary<string, string>> GetDataAsync(DataSourceContext context,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
         var client = new SalesforceClient(Creds);
 
@@ -25,10 +20,9 @@ public class AccountDataHandler : BaseInvocable, IAsyncDataSourceHandler
         var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
 
         var response = await client.GetAsync<ListAllAccountsResponse>(request);
-        return response.Records
+        return response!.Records
             .Where(x => context.SearchString is null ||
                         x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))
-            .Take(30)
-            .ToDictionary(x => x.Id, x => x.Name);
+            .Select(x => new DataSourceItem(x.Id, x.Name));
     }
 }
