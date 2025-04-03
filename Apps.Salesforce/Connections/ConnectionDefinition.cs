@@ -12,8 +12,8 @@ public class OAuth2ConnectionDefinition : IConnectionDefinition
         {
             Name = "OAuth2",
             AuthenticationType = ConnectionAuthenticationType.OAuth2,
-            ConnectionProperties = new List<ConnectionProperty>()
-            {
+            ConnectionProperties =
+            [
                 new(CredNames.DomainName) 
                 {
                     DisplayName = "Domain name"
@@ -27,8 +27,7 @@ public class OAuth2ConnectionDefinition : IConnectionDefinition
                     DisplayName = "Client secret",
                     Sensitive = true
                 }
-            }
-
+            ]
         }
     ];
 
