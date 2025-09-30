@@ -6,38 +6,37 @@ using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using RestSharp;
 
 namespace Apps.Salesforce.Crm.Actions;
 
-[ActionList]
-public class AccountActions
+[ActionList("Account")]
+public class AccountActions(InvocationContext invocationContext): Invocable(invocationContext)
 {
-    [Action("List all accounts", Description = "List all accounts")]
-    public ListAllAccountsResponse ListAllAccounts(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
+    [Action("Search all accounts", Description = "List all accounts")]
+    public ListAllAccountsResponse ListAllAccounts()
     {
         var query = "SELECT FIELDS(ALL) FROM Account LIMIT 200";
-        var client = new SalesforceClient(authenticationCredentialsProviders);
-        var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, authenticationCredentialsProviders);
+        var client = new SalesforceClient(Creds);
+        var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
         return client.Get<ListAllAccountsResponse>(request);
     }
 
     [Action("Get account", Description = "Get account by id")]
-    public AccountDto? GetAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
-        [ActionParameter] GetAccountRequest input)
+    public AccountDto? GetAccount([ActionParameter] GetAccountRequest input)
     {
         var query = $"SELECT FIELDS(ALL) FROM Account WHERE Id = '{input.Id}'";
-        var client = new SalesforceClient(authenticationCredentialsProviders);
-        var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, authenticationCredentialsProviders);
+        var client = new SalesforceClient(Creds);
+        var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
         return client.Get<ListAllAccountsResponse>(request).Records.FirstOrDefault();
     }
 
     [Action("Create account", Description = "Create account")]
-    public RecordIdDto? CreateAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
-        [ActionParameter] CreateAccountRequest input)
+    public RecordIdDto? CreateAccount([ActionParameter] CreateAccountRequest input)
     {
-        var client = new SalesforceClient(authenticationCredentialsProviders);
-        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account", Method.Post, authenticationCredentialsProviders);
+        var client = new SalesforceClient(Creds);
+        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account", Method.Post, Creds);
         request.AddJsonBody(input);
         return client.Execute<RecordIdDto>(request).Data;
     }
@@ -46,8 +45,8 @@ public class AccountActions
     public void UpdateAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
         [ActionParameter] UpdateContactRequest input)
     {
-        var client = new SalesforceClient(authenticationCredentialsProviders);
-        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Patch, authenticationCredentialsProviders);
+        var client = new SalesforceClient(Creds);
+        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Patch, Creds);
         var payload = new ExpandoObject();
         payload.TryAdd(input.FieldName, input.FieldValue);
         request.AddJsonBody(payload);
@@ -58,14 +57,14 @@ public class AccountActions
     public void DeleteAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
         [ActionParameter] GetAccountRequest input)
     {
-        var client = new SalesforceClient(authenticationCredentialsProviders);
-        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Delete, authenticationCredentialsProviders);
+        var client = new SalesforceClient(Creds);
+        var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Delete, Creds);
         client.Execute(request);
     }
 
     [Action("DEBUG: Get auth data", Description = "Can be used only for debugging purposes.")]
-    public IEnumerable<AuthenticationCredentialsProvider> GetAuthenticationCredentialsProviders(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
+    public IEnumerable<AuthenticationCredentialsProvider> GetAuthenticationCredentialsProviders()
     {
-        return authenticationCredentialsProviders;
+        return Creds;
     }
 }

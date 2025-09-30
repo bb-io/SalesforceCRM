@@ -1,16 +1,19 @@
 ﻿using Apps.Salesforce.Crm.Constants;
 using Blackbird.Applications.Sdk.Common.Authentication;
+using Blackbird.Applications.Sdk.Utils.RestSharp;
 using RestSharp;
 
 namespace Apps.Salesforce.Crm;
 
-public class SalesforceRequest : RestRequest
+public class SalesforceRequest : BlackBirdRestRequest
 {
-    public SalesforceRequest(string endpoint, 
-        Method method, 
-        IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders) : base(endpoint, method)
+    public SalesforceRequest(string endpoint, Method method, IEnumerable<AuthenticationCredentialsProvider> creds) : base(endpoint, method, creds)
     {
-        var token = authenticationCredentialsProviders.First(p => p.KeyName == CredNames.Authorization).Value;
-        this.AddHeader("Authorization", $"{token}");
+    }
+
+    protected override void AddAuth(IEnumerable<AuthenticationCredentialsProvider> creds)
+    {
+        var auth = creds.First(p => p.KeyName == CredNames.Authorization).Value;
+        this.AddHeader("Authorization", auth);
     }
 }
