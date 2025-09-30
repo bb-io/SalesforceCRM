@@ -5,6 +5,7 @@ using Apps.Salesforce.Crm.Models.Responses;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Authentication;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using RestSharp;
 
 namespace Apps.Salesforce.Crm.Actions;
@@ -60,5 +61,11 @@ public class AccountActions
         var client = new SalesforceClient(authenticationCredentialsProviders);
         var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Delete, authenticationCredentialsProviders);
         client.Execute(request);
+    }
+
+    [Action("DEBUG: Get auth data", Description = "Can be used only for debugging purposes.")]
+    public List<AuthenticationCredentialsProvider> GetAuthenticationCredentialsProviders()
+    {
+        return InvocationContext.AuthenticationCredentialsProviders.ToList();
     }
 }
