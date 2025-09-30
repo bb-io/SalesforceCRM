@@ -1,65 +1,61 @@
-﻿using System.Dynamic;
-using Apps.Salesforce.Crm.Dtos;
+﻿using Apps.Salesforce.Crm.Dtos;
 using Apps.Salesforce.Crm.Models.Requests;
 using Apps.Salesforce.Crm.Models.Responses;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Invocation;
-using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using RestSharp;
+using System.Dynamic;
 
 namespace Apps.Salesforce.Crm.Actions;
 
 [ActionList("Account")]
-public class AccountActions(InvocationContext invocationContext): Invocable(invocationContext)
+public class AccountActions(InvocationContext invocationContext) : Invocable(invocationContext)
 {
-    [Action("Search all accounts", Description = "List all accounts")]
-    public ListAllAccountsResponse ListAllAccounts()
+    [Action("Search all accounts", Description = "Search all accounts")]
+    public async Task<ListAllAccountsResponse> ListAllAccounts()
     {
         var query = "SELECT FIELDS(ALL) FROM Account LIMIT 200";
-        var client = new SalesforceClient(Creds);
         var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
-        return client.Get<ListAllAccountsResponse>(request);
+        return await Client.ExecuteWithErrorHandling<ListAllAccountsResponse>(request);
     }
 
     [Action("Get account", Description = "Get account by id")]
-    public AccountDto? GetAccount([ActionParameter] GetAccountRequest input)
+    public async Task<AccountDto> GetAccount([ActionParameter] GetAccountRequest input)
     {
         var query = $"SELECT FIELDS(ALL) FROM Account WHERE Id = '{input.Id}'";
-        var client = new SalesforceClient(Creds);
         var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
-        return client.Get<ListAllAccountsResponse>(request).Records.FirstOrDefault();
+        var response = await Client.ExecuteWithErrorHandling<ListAllAccountsResponse>(request);
+
+        return new() { Id = response.Records.FirstOrDefault().Id, Name = response.Records.FirstOrDefault().Name };
     }
 
     [Action("Create account", Description = "Create account")]
-    public RecordIdDto? CreateAccount([ActionParameter] CreateAccountRequest input)
+    public async Task<RecordIdDto> CreateAccount([ActionParameter] CreateAccountRequest input)
     {
-        var client = new SalesforceClient(Creds);
         var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account", Method.Post, Creds);
         request.AddJsonBody(input);
-        return client.Execute<RecordIdDto>(request).Data;
+        var response = await Client.ExecuteWithErrorHandling<RecordIdDto>(request);
+
+        return new RecordIdDto { Id = response.Id };
     }
 
     [Action("Update account field", Description = "Update account field")]
-    public void UpdateAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
-        [ActionParameter] UpdateContactRequest input)
+    public async Task UpdateAccount([ActionParameter] UpdateAccountRequest input)
     {
-        var client = new SalesforceClient(Creds);
         var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Patch, Creds);
         var payload = new ExpandoObject();
         payload.TryAdd(input.FieldName, input.FieldValue);
         request.AddJsonBody(payload);
-        client.Execute(request);
+        await Client.ExecuteWithErrorHandling(request);
     }
 
     [Action("Delete account", Description = "Delete account by id")]
-    public void DeleteAccount(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
-        [ActionParameter] GetAccountRequest input)
+    public async Task DeleteAccount([ActionParameter] GetAccountRequest input)
     {
-        var client = new SalesforceClient(Creds);
         var request = new SalesforceRequest($"services/data/v57.0/sobjects/Account/{input.Id}", Method.Delete, Creds);
-        client.Execute(request);
+        await Client.ExecuteWithErrorHandling(request);
     }
 
     [Action("DEBUG: Get auth data", Description = "Can be used only for debugging purposes.")]
