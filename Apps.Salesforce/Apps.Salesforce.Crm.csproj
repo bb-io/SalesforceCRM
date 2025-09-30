@@ -4,14 +4,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Product>Salesforce CRM</Product>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Description>Сloud-based customer relationship management platform that helps businesses manage and analyze customer interactions and data to improve sales, marketing, and customer service</Description>
     <AssemblyName>Apps.Salesforce.Crm</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Blackbird.Applications.SDK.Extensions.FileManagement" Version="1.0.1" />
     <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.26" />
-    <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.12.0" />
+    <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>

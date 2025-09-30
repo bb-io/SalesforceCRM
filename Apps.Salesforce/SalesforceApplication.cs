@@ -18,7 +18,11 @@ public class SalesforceApplication : BaseInvocable, IApplication, ICategoryProvi
 
     public SalesforceApplication(InvocationContext invocationContext) : base(invocationContext)
     {
-        _typesInstances = CreateTypesInstances();
+        _typesInstances = new()
+        {
+            { typeof(IOAuth2AuthorizeService), new OAuth2AuthorizeService(InvocationContext) },
+            { typeof(IOAuth2TokenService), new OAuth2TokenService(InvocationContext) }
+        };
     }
 
     public T GetInstance<T>()
@@ -29,14 +33,5 @@ public class SalesforceApplication : BaseInvocable, IApplication, ICategoryProvi
         }
         
         return (T)value;
-    }
-
-    private Dictionary<Type, object> CreateTypesInstances()
-    {
-        return new()
-        {
-            { typeof(IOAuth2AuthorizeService), new OAuth2AuthorizeService(InvocationContext) },
-            { typeof(IOAuth2TokenService), new OAuth2TokenService(InvocationContext) }
-        };
     }
 }

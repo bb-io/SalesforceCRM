@@ -19,7 +19,7 @@ public class AccountDataHandler(InvocationContext invocationContext) : BaseInvoc
         var query = "SELECT FIELDS(ALL) FROM Account LIMIT 200";
         var request = new SalesforceRequest($"services/data/v57.0/query?q={query}", Method.Get, Creds);
 
-        var response = await client.GetAsync<ListAllAccountsResponse>(request);
+        var response = await client.ExecuteWithErrorHandling<ListAllAccountsResponse>(request);
         return response!.Records
             .Where(x => context.SearchString is null ||
                         x.Name.Contains(context.SearchString, StringComparison.OrdinalIgnoreCase))

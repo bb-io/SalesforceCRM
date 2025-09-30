@@ -33,21 +33,21 @@ Once the connected app is created, you can get the Client ID (consumer key) and 
 ## Actions
 
 ###  Account
-- **List all accounts** List all accounts
+- **Search all accounts** List all accounts
 - **Get account** Get account by id
 - **Create account** Create account
 - **Update account field** Update account field
 - **Delete account** Delete account by id
 
 ###  Contact
-- **List all contacts** List all contacts
+- **Search all contacts** List all contacts
 - **Get contact** Get contact by id
 - **Create contact** Create contact
 - **Update contact field** Update contact field
 - **Delete contact** Delete contact by id
 
 ###  Files
-- **List all files** List all files
+- **Search all files** List all files
 - **Get file info** Get file info by id
 - **Download file** Download file by id
 - **Upload file** Upload file
