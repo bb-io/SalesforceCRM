@@ -64,8 +64,8 @@ public class AccountActions
     }
 
     [Action("DEBUG: Get auth data", Description = "Can be used only for debugging purposes.")]
-    public List<AuthenticationCredentialsProvider> GetAuthenticationCredentialsProviders()
+    public IEnumerable<AuthenticationCredentialsProvider> GetAuthenticationCredentialsProviders(IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders)
     {
-        return InvocationContext.AuthenticationCredentialsProviders.ToList();
+        return authenticationCredentialsProviders;
     }
 }
