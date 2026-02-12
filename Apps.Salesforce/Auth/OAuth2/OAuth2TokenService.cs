@@ -1,12 +1,13 @@
-using System.Text.Json;
 using Apps.Salesforce.Crm.Constants;
 using Blackbird.Applications.Sdk.Common;
+using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Authentication.OAuth2;
 using Blackbird.Applications.Sdk.Common.Invocation;
+using System.Text.Json;
 
 namespace Apps.Salesforce.Crm.Auth.OAuth2;
 
-public class OAuth2TokenService(InvocationContext invocationContext) : BaseInvocable(invocationContext), IOAuth2TokenService
+public class OAuth2TokenService(InvocationContext invocationContext) : BaseInvocable(invocationContext), IOAuth2TokenService, ITokenRefreshable
 {
     private const string ExpiresAtKeyName = "expires_at";
 
@@ -65,6 +66,19 @@ public class OAuth2TokenService(InvocationContext invocationContext) : BaseInvoc
             { "refresh_token", values["refresh_token"] },
         };
         return await RequestToken(bodyParameters, cancellationToken);
+    }
+
+    public int? GetRefreshTokenExprireInMinutes(Dictionary<string, string> values)
+    {
+        if (!values.TryGetValue(ExpiresAtKeyName, out var expireValue))
+            return null;
+
+        if (!DateTime.TryParse(expireValue, out var expireDate))
+            return null;
+
+        var difference = expireDate - DateTime.UtcNow;
+
+        return (int)difference.TotalMinutes - 5;
     }
 
     public Task RevokeToken(Dictionary<string, string> values)
